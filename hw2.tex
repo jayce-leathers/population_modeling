@@ -1,0 +1,417 @@
+\documentclass{article}
+
+\usepackage{fancyhdr}
+\usepackage{extramarks}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{tikz}
+\usepackage[plain]{algorithm}
+\usepackage{algpseudocode}
+
+\usetikzlibrary{automata,positioning}
+
+%
+% Basic Document Settings
+%
+
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+\linespread{1.1}
+
+\pagestyle{fancy}
+\lhead{\hmwkAuthorName\ \hmwkClass\ (\hmwkClassInstructor\ \hmwkClassTime): \hmwkTitle}
+\rhead{\firstxmark}
+\lfoot{\lastxmark}
+\cfoot{\thepage}
+
+\renewcommand\headrulewidth{0.4pt}
+\renewcommand\footrulewidth{0.4pt}
+
+\setlength\parindent{0pt}
+
+
+%
+% Homework Details
+%   - Title
+%   - Due date
+%   - Class
+%   - Section/Time
+%   - Instructor
+%   - Author
+%
+
+\newcommand{\hmwkTitle}{Project\ \#2}
+\newcommand{\hmwkDueDate}{Nov 3, 2015}
+\newcommand{\hmwkClass}{Modeling, Simulation, and Analysis}
+\newcommand{\hmwkClassTime}{Section 1}
+\newcommand{\hmwkClassInstructor}{Professor Eric Aaron}
+\newcommand{\hmwkAuthorName}{Jayce Rudig-Leathers}
+
+%
+% Title Page
+%
+
+\title{
+    \vspace{2in}
+    \textmd{\textbf{\hmwkClass:\ \hmwkTitle}}\\
+    \normalsize\vspace{0.1in}\small{Due\ on\ \hmwkDueDate\ at 10:30am}\\
+    \vspace{0.1in}\large{\textit{\hmwkClassInstructor\ \hmwkClassTime}}
+    \vspace{3in}
+}
+
+\author{\textbf{\hmwkAuthorName}}
+\date{}
+
+
+
+\begin{document}
+
+\maketitle
+
+\pagebreak
+\vspace{.25cm}
+\section*{Problem 1}
+
+  \textbf{a}\\
+  We first develop the equation for a model of three species' populations: P the predator,
+  Y the prey and H the humans. We assume that P only hunts Y and that H hunts Y and P
+  equally.  Also let us assume that the population H is constant over our simulation.
+  Based on the ideas presented in chapter 4.2 of our text, we arrive
+  at the following equations.\\
+
+  \[
+  \frac{dP}{dt} = K_{PY}PY - K_{H}HP - K_{P}P
+  \]\\
+
+  This equation represents the rate in change of the predator population. $P,Y and H$
+  are simply the populations of their respective species at time $t$. $K_{PY}PY$ represents
+  P's births due to interactions with Y, $K_{PY}$ is the proportion of these interactions
+  resulting in P births. Similarily $K_{HP}HP$ represents interactions with H resulting
+  in P deaths where $K_{H}$ is the proportion of H interactions resulting in deaths. This
+  variable is the same for both equations.
+  Lastly, $K_{P}P$ is the natural deaths of P with $K_{P}$ is the fraction of deaths of P.
+  This is actually a revised model. The original did not take into account deaths due to
+  natural causes however due to a problem with the model in part e it was revisited and
+  this was added.
+
+  \[
+  \frac{dY}{dt} = K_{Y}Y - K_{YP}YP - K_{H}HY
+  \]\\
+
+  This equation represents the rate in change of the prey population. $P,Y and H$
+  are simply the populations of their respective species at time $t$. $K_{Y}Y$
+  represents the births of Y, $K_{Y}$ is the fraction of births of Y. $K_{YP}YP$
+  represents deaths due to interactions with P, $K_{YP}$ is the proportion of interactions
+  resulting in Y deaths. Similarily, $K_{H}HY$ represents the deaths due to H interactions.
+  As said before H is the deaths of both species due to H. \\
+
+  \textbf{b}\\
+
+  For either equation if the population modeled reaches 0 the growth function goes to
+  and stays at 0.
+  This makes sense as the population (Y or P respectively) is a term of each quantity
+  in the equation i.e. $K_{Y}0 - K_{YP}0P - K_{H}0Y = 0$. If a population is 0 and
+  it's growth rate is 0 it will remain at
+  0. We also find equilibria solutions if the positive quantities of each equation equals the
+  negative thus the growth rate goes to zero and populations remain constant all other things
+  constant. We can see that
+
+  \[
+    K_{PY}PY  =  K_{H}HP + K_{P}P \to K_{PY}Y  =  K_{H}H + K_{P}\\
+    \text{ and }\\
+    K_{Y}Y = K_{YP}YP + K_{H}HY \to K_{Y} = K_{YP}P + K_{H}H\\
+  \]
+\pagebreak
+  are both equilibria solutions as the growth rate is 0 in both of these cases.\\
+
+  \textbf{c}\\
+  We begin with the model without fishing. It's initial variables are as below.
+  The result can be seen in fig 1c\_01 within my submitted code folder.\\
+
+  \begin{verbatim}
+    %simulation variables
+    dt = .00001; %time step
+    simulationLength = 12; %length of time to simulate. In months
+    N = simulationLength/dt; %number of iterations
+
+    %xAxis array of timeSteps
+    times = zeros(1,N + 1);
+    times(1) = 0;
+
+    %Population  Inital values
+    Y(1) = 100;
+    P(1) = 15;
+
+    %Proportion of Interaction Variables
+    KPY = .01; %Proportion of Predator births due to interactions with Prey
+    KYP = .02; %Proportion of Prey deaths due to interactions with Predators
+    KY = 2; %Prey birth fraction
+    KP = 1.06; %Predator death fraction
+  \end{verbatim}
+
+  We then set P(1) = 50  and  get more moderate oscillation (fig 1c\_02).
+  Then try high P low (~1000) and Y (~5) and the reverse. The oscillations became
+  more severe (sharp) in both cases (fig 1c\_03). We then try Y and P equal at 100.
+  (fig 1c\_04) from this we can conclude that the difference between Y and P determine
+  the amount the functions oscillate. The greater the distance the higher the
+  fluctuations. This makes sense because if one of the populations is disproportionately
+  large the other must increase  nearer that level before it can have a significant
+  impact on the larger.\\
+
+  Varying the KPY rate (.001,.1) reveals that a higher KPY raises predator population
+  constantly above prey (fig 1c\_05), while a very low KPY causes the prey population
+  to increase rapidly (fig 1c\_06). This makes sense if we think about KPY as how well
+  P hunts Y. i.e. how many possible interactions result in a birth. So with high
+  KPY there are more births and the predator population stays higher than prey.\\
+
+  KYP affects the model in a similar way. We can think of KYP as the vulnerability
+  of the prey’s defense. So an increased KYP (.1) results in a small population of
+  predators being able to control a large population of prey (fig 1c\_07). Or conversely
+  a very low vulnerability (.005) means that the predator population has to grow
+  huge before it decreases the growth of prey population (fig 1c\_08).\\
+
+  The KY and KP both act in similar ways. KY (.5) increases how quickly new prey
+  are born and thus increases how sharply prey and predator populations grow (fig 1c\_09).
+  And KP (4.06) increases how quickly predators die with similar affects on the model
+  (fig 1c\_10).\\
+
+  We then add a constant human population to the model as follows\\
+
+  \begin{verbatim}
+    %simulation variables
+    dt = .00001; %time step
+    simulationLength = 12; %length of time to simulate. In months
+    N = simulationLength/dt; %number of iterations
+
+    %xAxis array of timeSteps
+    times = zeros(1,N + 1);
+    times(1) = 0;
+    %Population Initial values
+
+    Y(1) = 100;
+    P(1) = 15;
+    H(1:N + 1) = 25;
+
+    %Proportion of Interaction Variables
+    KPY = .01; %Proportion of Predator births due to interactions with Prey
+    KYP = .02; %Proportion of Prey deaths due to interactions with Predators
+    KH = .01; %Proportion of deaths due to human interactions same for predators and prey
+    KY = 2; %Prey birth fraction
+    KP = 1.06; %Predator death fraction
+  \end{verbatim}
+
+  We don't initially see much difference (fig 1c\_11, 1c\_12) except for a slight lowering
+  in the maximum population P attains. As we increase KH the difference between P and Y
+  becomes even more pronounced as in fig 1c\_13 where KH is .06. Raising KH raises Y while
+  decreasing P. I attribute this to the fact that H both hunts P and its food supply
+  doubley decreasing the population. Y is raised because it's main predator P is shrinking.\\
+
+  \textbf{d}\\
+  We then increase KH to .07 and see the same effects as before. At .08, however,
+  P goes extinct and Y stays constant (fig 1c\_14). This is because once P is driven extinct
+  not only has it reached equilibrium but so has Y. If we plug our current variables into
+   $K_{Y} = K_{YP}P + K_{H}H$ the equilibrium solution we calculated earlier
+  we get $2 = (.02 * 0) + (.08 * 25) \to 2 = 2$ which is why the Y population stays constant.\\
+
+  \textbf{e}\\
+  This model takes into account a periodic rate of H hunting. It was built based on
+  the formula for cosine given in chapter 4.2 of our text $f + a cos ( p * t)$,
+  where p is the period, a the amplitude and f a vertical shift. I solve for a period of 12
+  to get $p = frac{\pi}{6}$ amplitude is set to .02 to start (this is the max of KH rate)
+  , and $f = 0$. We can see the KHT function in fig 1e\_01.
+  I encountered many problems simulating this due to my previous exclusion of natural predator
+  deaths in the model. This caused the system to act in unexpected and undesired ways.
+  After I realized that predators should die naturally too this results are much more
+  meaningful. The resulting model is the same as previously presented in parts e and d except
+  that KH is a function of time. This yields the following equations\\
+
+  \[
+    \frac{dP}{dt} = K_{PY}PY - K_{H}(t)HP - K_{P}P
+  \]
+  \[
+    \frac{dY}{dt} = K_{Y}Y - K_{YP}YP - K_{H}(t)HY
+  \]
+
+  \pagebreak
+  Our simulations starts as follows\\
+
+  \begin{verbatim}
+    %Initial values
+    Y(1) = 250;
+    P(1) = 150;
+    H(1:N + 1) = 10; %constant
+
+    %Proportion of Interaction Variables
+    KPY = .01; %Proportion of Predator births due to interactions with Prey
+    KYP = .02; %Proportion of Prey deaths due to interactions with Predators
+    KY = 2; %Prey birth fraction
+    KP = 1.06; %Predator death fraction
+
+    %cosine constants
+    f = 0; %raise graph by f
+    a = .04; %amplitude - this ends up being the max value of
+    p = pi/6; %period
+  \end{verbatim}
+  This first simulation results in fig 1e\_02. We see the P population peak higher
+  after the second KHT peak but not the first. The second simulation we increase the
+  simulation length to 48 and the pattern is more visible (fig 1e\_03). Following alternating
+  peaks of KHT the Y level will spike higher and then the P level will dip lower. If we
+  extend the simulation length to 144 we get fig 1e\_05. At this point, simulation error
+  begins to alter the graph but we can see that the pattern is actually more complicated.
+  We can also see the fishing rate (green) plotted along with the populations. It appears
+  that the fluctuating heights of the peaks are due to the difference between the period of
+  the fishing rate and the natural cycles of P and Y interaction. In other words the height
+  depends on where
+  P and Y are in their cycle (as illustrated in simulation one) when the fishing begins.
+  We then bring the simulation length down to 48 in order to only see relatively
+  accurate results. In fig 1e\_06 we see that the highest prey peaks are after
+  a full period of P and Y have happened while the fishing rate was zero
+  (right around t = 8 and t = 30). It's after the points when the increasing fishing rate
+  drives P to it's lowest trough that the Y rate spikes so sharpyly. I attribute this to
+  the fact that there are less predators resulting in less prey deaths so Y can grow
+  as sharply as we see. If we change the max fishing rate we see that the higher the rate
+  the sharper and higher Y and P peak, (fig 1e\_07 with rate $\le .08$ and fig 1e\_08 with
+  rate $\le .01$). Some other interesting results are that if we increase the human population to
+  50 both P and Y will go extinct fig 1e\_09. Y goes extinct first and then without food
+  P follows. If we then leave the human population at 50 and increase the Y birth rate, we
+  get fig 1e\_10. Here we see that with more prey in the system it stabilizes. I believe that
+  the fluctuations after t = 35 are due to simulation error. These results all model
+  as it brings up many questions about the robustness of a system to withstand human interactions.
+
+  \pagebreak
+  \section*{Problem 2}
+
+  \vspace{.5cm}
+  \textbf{a}\\
+  We develop the following equations for our new model. This is largely based on our
+  previous model but with H not constant. We assume that H's only prey is P so it's births
+  are represent by $K_{HP}HP$ where $K_{HP}$ is the proportion of P interactions resulting in
+  births. and that
+  it's deaths are only a function of the current population. The only change to Y's
+  equation is that Y and H no longer directly interact. The equation for P has not changed
+  except changing the proportion of H interactions resulting in death's notation to be $K_{PH}$ and
+  removing naturally deaths based on the instructions to treat P's deaths as those of a prey species.
+
+  \[
+    \frac{dP}{dt} = K_{PY}PY - K_{PH}PH
+  \]
+  \[
+    \frac{dY}{dt} = K_{Y}Y - K_{YP}YP
+  \]
+  \[
+    \frac{dH}{dt} = K_{HP}HP - K_{H}H
+  \]
+
+  \textbf{b}\\
+
+  From the model in part a, we then arrive at the following model. The only differences here are
+  that first $\frac{dY}{dt}$ takes into account deaths due H interactions $K_{YH}YH$ where $K_{YH}$ is
+  the proportions of interactions resulting in death. And $\frac{dH}{dt}$ takes into account
+  births due to the same interactions where $K_{HY}$ represents this proportion.
+  \[
+    \frac{dP}{dt} = K_{PY}PY - K_{PH}PH
+  \]
+  \[
+    \frac{dY}{dt} = K_{Y}Y - K_{YP}YP - K_{YH}YH
+  \]
+  \[
+    \frac{dH}{dt} = K_{HP}HP + K_{HY}HY - K_{H}H
+  \]
+
+  \textbf{b}\\
+
+  I wonder whether H hunting both Y and P or if H hunting only P will result in a more
+  fragile system. By fragile I mean how easy it easy for one of the species to go extinct.
+
+  My hypothesis is that in model b, P will be driven to extinction if KHP, KHY or KH is
+  large compared to KPY
+  While in model a, P will harder to drive extinct.
+  I base this on my suspicion that H will have an inordinate impact on the system due to the fact
+  that it hunts both species Y and P.
+
+  We start with the simulation as seen here. Most constants are as they are in the model
+  from 1e. The new constants in the model are best guesses based on other constants involved.\\
+
+\begin{verbatim}
+  %simulation variables
+  dt = .000001; %time step
+  simulationLength = 24; %length of time to simulate. In months
+  N = simulationLength/dt; %number of iterations
+
+  %Inital values
+  Y(1) = 150;
+  P(1) = 50;
+  H(1:N + 1) = 25;
+
+  %Proportion of Interaction Variables
+  KPY = .01; %Proportion of Predator births due to interactions with Prey
+  KPH = .01; %Proportion of Predator deaths due to H
+  KP = 1.06; % P death fraction
+
+  KYP = .02; %Proportion of Prey deaths due to interactions with Predators
+  KYH = .01; %Proportion of Prey deaths due to interactions with H
+  KY = 2; %Prey birth fraction
+
+  KHP = .01; %Proportion of H births due to P interactions
+  KHY = .01; %Proportion of H births due to Y interactions
+  KH = 1.01; %Human death fraction an order of magnitude greater than constants
+             %involving two populations
+\end{verbatim}
+
+This simulation results in fig 2c\_01 and fig 2c\_02. Fig 2c\_01 of model a
+seems to show a functional population system. There are easy cycles and nothing goes
+extinct. However,in fig 2c\_02 of model b, we see that P does go extinct. These results
+don't necessarily support our hypothesis we can't be sure where exactly they come from
+since\\
+
+\[
+  KHP = .01 = KPY
+\]
+\[
+  KYH = .01 = KPY
+\]
+\[
+  KH = 1.01 = KPY * 10 \text{(compare by order of magnitude)}
+\]
+
+We begin by increasing KPY by .01 to see how that affects the system. We can see
+in fig 2c\_03 that model a has only changed by raising the maximum P and H, and lowering
+the maximum of Y. In fig 2c\_4, we see that P no longer goes extinct in model b with this
+change. This supports our hypothesis, but further testing is needed. Leaving KPY as is
+and raising KPH to .02 (KPH = KPY again) we get no significant change in model a.
+ In fig 2c\_05 we see that once
+again P goes extinct. Let's now test when KPH is higher or lower than KPY. Raising KPH
+to .03, .04 and .05 we see that the only change is how quickly P goes extinct (fig 2c\_06).
+Not even at .05 does P go extinct in model a.
+Lowering KPH  to .005 we see that the period of the graph is lengthened and that P and H
+grow higher than with KPH = .02, but do not go extinct. These results do seem to support
+our hypothesis with the added insight that P will go extinct if $KPH \ge KPY$.\\
+
+Leaving KPH at .01 (the value at which P does not go extinct), we then explore the effects of
+KYH (KPH is not in model a so it remains unchanged).  We raise KYH to .02 and get a lengthened periodicity but not extinction. Raising it all
+the way to .1 does not result in an extinction of P, just a very stretched period (fig 2c\_07).
+Increasing the KYH all the way to 1 does not in fact drive P to extinction but does drive
+Y and H to extinction (fig 2c\_08). We can conclude from this that KPY and KYH are not
+related as hypothesised. This result is directly because we chose not to factor natural
+deaths into P. So when Y and H die out there are no P deaths and thus P remains constant
+as we see.\\
+
+We now return KPH to .01 and explore KH's effects. Raising KH to 1.5 we see similar results
+to the simulation targeting KPH. H drives Y extinct and then it self goes extinct. P then
+becomes constant (fig 2c\_09). Model a's graph is very similar.  This is again due to our simplifying assumption of P as prey as far
+as deaths are modeled. From these last two results I conclude that maybe this was not
+the right assumption for our model. Running one last test with natural deaths added to
+the model we get fig 2c\_10 where H goes extinct but P and Y remain in a normal pattern.
+
+From these results we can conlude that only the first part of hypothesis is supported by the
+data. That is that KHP greater than KPY will cause extinction of P in model b but not
+model a.
+
+\pagebreak
+\end{document}
